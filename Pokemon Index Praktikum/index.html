@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Pokémon Explorer</title>
+</head>
+<body>
+
+  <h1>Pokémon Explorer</h1>
+  <p>Willkommen! Hier kannst du Pokémon suchen oder zufällig entdecken.</p>
+
+  <input type="text" id="searchInput" placeholder="Name oder ID">
+  <button onclick="searchPokemon()">Suchen</button>
+  <button onclick="loadRandomPokemon()">Zufälliges Pokémon</button>
+
+  <div id="result"></div>
+
+  <script>
+    const API_URL = "https://pokeapi.co/api/v2/pokemon/";
+
+    async function fetchPokemon(query) {
+      try {
+        const response = await fetch(API_URL + query.toLowerCase());
+        if (!response.ok) throw new Error();
+        const data = await response.json();
+        showPokemon(data);
+      } catch {
+        document.getElementById("result").innerHTML =
+          "<p style='color:red;'>Pokémon nicht gefunden ❌</p>";
+      }
+    }
+
+    function showPokemon(pokemon) {
+      document.getElementById("result").innerHTML = `
+        <div style="border:1px solid black; padding:10px; width:250px;">
+          <img src="${pokemon.sprites.front_default}">
+          <h2>${pokemon.name}</h2>
+          <p>ID: ${pokemon.id}</p>
+          <p>Größe: ${pokemon.height / 10} m</p>
+          <p>Gewicht: ${pokemon.weight / 10} kg</p>
+        </div>
+      `;
+    }
+
+    function loadRandomPokemon() {
+      const randomId = Math.floor(Math.random() * 151) + 1;
+      fetchPokemon(randomId);
+    }
+
+    function searchPokemon() {
+      const value = document.getElementById("searchInput").value;
+      fetchPokemon(value);
+    }
+
+    loadRandomPokemon();
+  </script>
+
+</body>
+</html>
